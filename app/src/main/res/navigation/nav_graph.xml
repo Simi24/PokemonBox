@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/pokemonListView">
+
+    <fragment
+        android:id="@+id/pokemonListView"
+        android:name="com.example.testandroidstudio.ui.PokemonListFragment"
+        android:label="Pokemon List"
+        tools:layout="@layout/fragment_pokemon_list_view">
+        <action
+            android:id="@+id/action_pokemonListView_to_searchResult"
+            app:destination="@id/searchResult" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchResult"
+        android:name="com.example.testandroidstudio.ui.SearchPokemonResultFragment"
+        android:label="Search Results"
+        tools:layout="@layout/fragment_search_result">
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_searchResult_to_pokemonListView"
+            app:destination="@id/pokemonListView" />
+    </fragment>
+</navigation>
