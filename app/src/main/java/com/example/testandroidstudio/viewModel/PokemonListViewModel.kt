@@ -1,6 +1,6 @@
 package com.example.testandroidstudio.viewModel
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,11 +12,10 @@ import com.example.testandroidstudio.repository.IPokemonRepository
 import com.example.testandroidstudio.repository.PokemonRepository
 import com.example.testandroidstudio.utility.Constants
 import com.example.testandroidstudio.utility.PokemonUiState
-import com.example.testandroidstudio.utility.ResourceHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class PokemonListViewModel(private val resourceHelper: ResourceHelper, private val pokemonRepository: IPokemonRepository = PokemonRepository()) : ViewModel() {
+class PokemonListViewModel(private val application: Application, private val pokemonRepository: IPokemonRepository = PokemonRepository()) : ViewModel() {
 
     //region LiveData declarations
     private val _pokemonList = MutableLiveData<List<Pokemon>>()
@@ -56,7 +55,7 @@ class PokemonListViewModel(private val resourceHelper: ResourceHelper, private v
             _pokemonList.value = list
             updateCurrentList()
         } catch (e: Exception) {
-            handleError(resourceHelper.getString(R.string.error_loading_pokemon_list))
+            handleError(application.getString(R.string.error_loading_pokemon_list))
         }
     }
 
@@ -67,7 +66,7 @@ class PokemonListViewModel(private val resourceHelper: ResourceHelper, private v
             _searchResults.value = pokemonRepository.searchPokemon(query)
             _pokemonUiState.value = _searchResults.value?.let { PokemonUiState.Success(it) }!!
         } catch (e: Exception) {
-            handleError(resourceHelper.getString(R.string.error_searching_pokemon))
+            handleError(application.getString(R.string.error_searching_pokemon))
         }
     }
 
@@ -104,7 +103,7 @@ class PokemonListViewModel(private val resourceHelper: ResourceHelper, private v
             updateMaxPage()
         } catch (e: Exception) {
             _isNextPageLoading.value = false
-            handleError(resourceHelper.getString(R.string.error_loading_more_pokemon))
+            handleError(application.getString(R.string.error_loading_more_pokemon))
         }
     }
 

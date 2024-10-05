@@ -1,6 +1,7 @@
 package com.example.testandroidstudio.ui
 
 import android.app.AlertDialog
+import android.app.Application
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
@@ -24,7 +25,6 @@ import com.example.testandroidstudio.model.Pokemon
 import com.example.testandroidstudio.repository.PokemonRepository
 import com.example.testandroidstudio.utility.Constants
 import com.example.testandroidstudio.utility.PokemonUiState
-import com.example.testandroidstudio.utility.ResourceHelper
 import com.example.testandroidstudio.viewModel.PokemonListViewModel
 import kotlinx.coroutines.launch
 
@@ -32,8 +32,7 @@ class PokemonListFragment : Fragment() {
     //region Properties
     private val viewModel: PokemonListViewModel by activityViewModels() {
         val pokemonRepository = PokemonRepository()
-        val resourceHelper = ResourceHelper(requireContext())
-        PokemonListViewModelFactory(pokemonRepository, resourceHelper)
+        PokemonListViewModelFactory(pokemonRepository, requireActivity().application)
     }
     private lateinit var adapter: PokemonListAdapter
     private lateinit var binding: FragmentPokemonListViewBinding
@@ -96,7 +95,7 @@ class PokemonListFragment : Fragment() {
     }
 
     private fun setupTitle() {
-        val titleText = "PokemonBox"
+        val titleText = getString(R.string.title)
         val spannableString = SpannableString(titleText).apply {
             setSpan(StyleSpan(Typeface.NORMAL), 0, 7, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             setSpan(StyleSpan(Typeface.BOLD), 7, titleText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -281,12 +280,12 @@ class PokemonListFragment : Fragment() {
 
     class PokemonListViewModelFactory(
         private val pokemonRepository: PokemonRepository,
-        private val resourceHelper: ResourceHelper
+        private val application: Application
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PokemonListViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return PokemonListViewModel(resourceHelper, pokemonRepository) as T
+                return PokemonListViewModel(application, pokemonRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
