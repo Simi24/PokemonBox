@@ -19,24 +19,25 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         app:boxCornerRadiusBottomEnd="8dp"
-        app:boxCornerRadiusTopEnd="8dp"
         app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
         app:boxCornerRadiusTopStart="8dp"
+        app:layout_constraintBottom_toTopOf="@id/pokemonRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/pokemonRecyclerView"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/searchEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:background="@drawable/rounded_corners"
             android:backgroundTint="#e9ecef"
             android:drawableStart="@drawable/baseline_search_24"
@@ -73,9 +74,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:backgroundTint="#343a40"
+            android:textSize="18sp"
+            android:backgroundTint="@color/color_selector"
             android:textColor="@color/white"
-            android:text="@string/previous" />
+            android:text="@string/back" />
 
         <Button
             android:id="@+id/nextButton"
@@ -83,7 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:backgroundTint="#343a40"
+            android:textSize="18sp"
+            android:backgroundTint="@color/color_selector"
             android:textColor="@color/white"
             android:text="@string/next" />
 
