@@ -1,6 +1,5 @@
 package com.example.testandroidstudio.repository
 
-import androidx.lifecycle.MutableLiveData
 import com.example.testandroidstudio.model.Pokemon
 import com.example.testandroidstudio.utility.api_responce_handler.PokemonInfoResponse
 import com.example.testandroidstudio.utility.api_responce_handler.PokemonSpeciesResponse
@@ -8,19 +7,18 @@ import com.example.testandroidstudio.network.RetrofitClient
 import com.example.testandroidstudio.utility.Constants
 import java.util.Locale
 
-class PokemonRepository() {
+class PokemonRepository(): IPokemonRepository {
     private var retrofitInstance = RetrofitClient.getRetrofitInstance()
 
-    suspend fun getPokemonList(ids: MutableLiveData<MutableList<Int>>): List<Pokemon> {
-        val remainingIds = ids.value ?: mutableListOf()
+    override suspend fun getPokemonList(ids: MutableList<Int>): List<Pokemon> {
 
         return (1..20).mapNotNull {
             var id: Int
             do {
                 id = (1..Constants.TOTAL_POKEMON_COUNT).random()
-            } while (!remainingIds.contains(id)) // Avoid duplicates
+            } while (!ids.contains(id)) // Avoid duplicates
 
-            ids.value?.remove(id)
+            ids.remove(id)
 
             val pokemonInfo = try {
                 retrofitInstance.getPokemonInfoById(id).body()
@@ -38,7 +36,7 @@ class PokemonRepository() {
         }
     }
 
-    suspend fun searchPokemon(query: String): Pokemon? {
+    override suspend fun searchPokemon(query: String): Pokemon? {
         if (query.isEmpty()) {
             return null
         }

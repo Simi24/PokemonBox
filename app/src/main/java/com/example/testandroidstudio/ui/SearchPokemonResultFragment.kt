@@ -1,6 +1,9 @@
 package com.example.testandroidstudio.ui
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,9 +11,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.testandroidstudio.R
+import com.example.testandroidstudio.databinding.FragmentSearchResultBinding
+import com.example.testandroidstudio.viewModel.SearchPokemonResultViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.CoroutineScope
@@ -19,66 +28,86 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchPokemonResultFragment : Fragment() {
-    private var pokemonName: String? = null
-    private var pokemonImageUrl: String? = null
-    private var pokemonDescription: String? = null
-    private var pokemonTypes: Array<String>? = null
+    //region Properties
+    private lateinit var binding: FragmentSearchResultBinding
+    private val viewModel: SearchPokemonResultViewModel by activityViewModels()
+    //endregion Properties
 
-    private lateinit var nameTextView: TextView
-    private lateinit var imageView: ImageView
-    private lateinit var descriptionTextView: TextView
-    private lateinit var typeChipGroup: ChipGroup
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            pokemonName = it.getString("name")
-            pokemonImageUrl = it.getString("imageUrl")
-            pokemonDescription = it.getString("description")
-            pokemonTypes = it.getStringArray("type")
-        }
-    }
-
+    //region Lifecycle Methods
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_search_result, container, false)
+    ): View {
+        binding = FragmentSearchResultBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        nameTextView = view.findViewById(R.id.pokemonNameTextView)
-        imageView = view.findViewById(R.id.imageView)
-        descriptionTextView = view.findViewById(R.id.pokemonDescription)
-        typeChipGroup = view.findViewById(R.id.typesChip)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.initializeData(arguments)
+        setupUI()
+        observeViewModel()
+    }
+    //endregion Lifecycle Methods
 
-        nameTextView.text = pokemonName ?: "Name not available"
+    //region UI Setup
+    private fun setupUI() {
+        setupGoBackButton()
+    }
 
-        if (pokemonImageUrl != null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                loadImage(pokemonImageUrl!!, imageView)
+    private fun setupGoBackButton() {
+        binding.goBackButton.setOnClickListener {
+            findNavController().navigate(R.id.action_searchResult_to_pokemonListView)
+        }
+    }
+    //endregion UI Setup
+
+    //region ViewModel Observation
+    private fun observeViewModel() {
+        viewModel.pokemon.observe(viewLifecycleOwner) { pokemonData ->
+            updatePokemonName(pokemonData.name)
+            updatePokemonImage(pokemonData.imageUrl)
+            updatePokemonDescription(pokemonData.description)
+            updatePokemonTypes(pokemonData.types)
+        }
+    }
+
+    private fun updatePokemonName(name: String?) {
+        binding.pokemonNameTextView.text = name ?: "Name not available"
+    }
+
+    private fun updatePokemonImage(imageUrl: String?) {
+        if (imageUrl != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                loadImage(imageUrl, binding.imageView)
             }
         } else {
-            imageView.setImageResource(R.drawable.ic_launcher_foreground)
+            binding.imageView.setImageResource(R.drawable.ic_launcher_foreground)
         }
+    }
 
-        descriptionTextView.text = pokemonDescription ?: "Description not available"
+    private fun updatePokemonDescription(description: String?) {
+        binding.pokemonDescription.text = description ?: "Description not available"
+    }
 
-        typeChipGroup.removeAllViews()
-        pokemonTypes?.forEach { type ->
-            val chip = Chip(requireContext())
-            chip.text = type
-            chip.setTypeface(null, android.graphics.Typeface.BOLD)
-            chip.setChipBackgroundColorResource(R.color.chip_background)
-            chip.setTextColor(android.graphics.Color.DKGRAY)
-            chip.chipStrokeWidth = 0f
-            chip.isClickable = false
-            typeChipGroup.addView(chip)
+    private fun updatePokemonTypes(types: List<String>?) {
+        binding.typesChip.removeAllViews()
+        types?.forEach { type ->
+            binding.typesChip.addView(createTypeChip(type))
         }
+    }
+    //endregion ViewModel Observation
 
-        view.findViewById<Button>(R.id.goBackButton).setOnClickListener {
-            Navigation.findNavController(requireView()).navigate(R.id.action_searchResult_to_pokemonListView)
+    //region Helper Methods
+    private fun createTypeChip(type: String): Chip {
+        return Chip(requireContext()).apply {
+            text = type
+            setTypeface(null, Typeface.BOLD)
+            setChipBackgroundColorResource(R.color.chip_background)
+            setTextColor(Color.DKGRAY)
+            chipStrokeWidth = 0f
+            isClickable = false
         }
-
-        return view
     }
 
     private suspend fun loadImage(url: String, imageView: ImageView) {
@@ -94,16 +123,8 @@ class SearchPokemonResultFragment : Fragment() {
                 }
             }
         } catch (e: Exception) {
-            println("Error loading image: $e")
+            Log.e("SearchPokemonResultFragment", "Error loading image: $e")
         }
     }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            SearchPokemonResultFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
-    }
+    //endregion Helper Methods
 }
