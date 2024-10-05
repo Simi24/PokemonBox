@@ -5,15 +5,15 @@ import com.example.testandroidstudio.utility.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitClient {
-    companion object {
-        fun getRetrofitInstance(): PokemonApiService {
-            val retrofit = Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+object RetrofitClient {
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
-            return retrofit.create(PokemonApiService::class.java)
-        }
+    val apiService: PokemonApiService by lazy {
+        retrofit.create(PokemonApiService::class.java)
     }
 }

@@ -8,7 +8,7 @@ import com.example.testandroidstudio.utility.Constants
 import java.util.Locale
 
 class PokemonRepository(): IPokemonRepository {
-    private var retrofitInstance = RetrofitClient.getRetrofitInstance()
+    private var retrofitInstance = RetrofitClient.apiService
 
     override suspend fun getPokemonList(ids: MutableList<Int>): List<Pokemon> {
 
