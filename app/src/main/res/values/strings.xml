@@ -7,4 +7,7 @@
     <string name="next">Next</string>
     <string name="search_name">Search name</string>
     <string name="go_back">Go Back</string>
+    <string name="error_searching_pokemon">Error searching Pokemon</string>
+    <string name="error_loading_more_pokemon">Error loading more Pokemon</string>
+    <string name="error_loading_pokemon_list">Error loading Pokemon list</string>
 </resources>

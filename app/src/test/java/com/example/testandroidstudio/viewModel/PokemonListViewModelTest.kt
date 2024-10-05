@@ -35,14 +35,14 @@ class PokemonListViewModelTest {
     }
 
     @Test
-    fun `test loadPokemonList should update pokemonList`() = runTest {
+    fun `test initializePokemonList should update pokemonList`() = runTest {
         val fakePokemonList = listOf(
             Pokemon(id = 1, name = "Pikachu", types = listOf("Electric"), imageUrl = "https://pokeapi.co/media/sprites/pokemon/25.png", description = "This is Pikachu"),
             Pokemon(id = 2, name = "Charmander", types = listOf("Fire"), imageUrl = "https://pokeapi.co/media/sprites/pokemon/4.png", description = "This is Charmander")
         )
         whenever(pokemonRepository.getPokemonList(anyOrNull())).thenReturn(fakePokemonList)
 
-        viewModel.loadPokemonList().join()
+        viewModel.initializePokemonList().join()
 
         assertEquals(fakePokemonList, viewModel.pokemonList.getOrAwaitValue())
     }
@@ -63,7 +63,7 @@ class PokemonListViewModelTest {
         val newPokemonList = listOf(Pokemon(id = 2, name = "Ivysaur", types = listOf("Grass"), imageUrl = "https://pokeapi.co/media/sprites/pokemon/2.png", description = "This is Ivysaur"))
 
         whenever(pokemonRepository.getPokemonList(anyOrNull())).thenReturn(initialPokemonList)
-        viewModel.loadPokemonList().join()
+        viewModel.initializePokemonList().join()
 
         whenever(pokemonRepository.getPokemonList(anyOrNull())).thenReturn(newPokemonList)
         viewModel.loadMorePokemon().join()
@@ -79,8 +79,8 @@ class PokemonListViewModelTest {
         }
         whenever(pokemonRepository.getPokemonList(anyOrNull())).thenReturn(fakePokemonList)
 
-        viewModel.loadPokemonList().join()
-        viewModel.incrementPage()
+        viewModel.initializePokemonList().join()
+        viewModel.goToNextPage()
 
         assertEquals(1, viewModel.currentPage.getOrAwaitValue())
 
@@ -96,9 +96,9 @@ class PokemonListViewModelTest {
 
         whenever(pokemonRepository.getPokemonList(anyOrNull())).thenReturn(fakePokemonList)
 
-        viewModel.loadPokemonList().join()
-        viewModel.incrementPage()
-        viewModel.decrementPage()
+        viewModel.initializePokemonList().join()
+        viewModel.goToNextPage()
+        viewModel.goToPreviousPage()
 
         assertEquals(0, viewModel.currentPage.getOrAwaitValue())
 
