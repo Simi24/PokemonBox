@@ -41,8 +41,8 @@ class PokemonRepository(): IPokemonRepository {
             return null
         }
 
-        var pokemonInfo: PokemonInfoResponse? = null
-        var pokemonSpecies: PokemonSpeciesResponse? = null
+        val pokemonInfo: PokemonInfoResponse?
+        val pokemonSpecies: PokemonSpeciesResponse?
         val id: Int
 
         try {
