@@ -1,7 +1,6 @@
 package com.example.testandroidstudio.ui
 
 import android.app.AlertDialog
-import android.app.Application
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
@@ -13,8 +12,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.testandroidstudio.R
 import com.example.testandroidstudio.databinding.FragmentPokemonListViewBinding
 import com.example.testandroidstudio.model.Pokemon
-import com.example.testandroidstudio.repository.PokemonRepository
 import com.example.testandroidstudio.utility.Constants
 import com.example.testandroidstudio.utility.PokemonUiState
 import com.example.testandroidstudio.viewModel.PokemonListViewModel
@@ -30,10 +26,7 @@ import kotlinx.coroutines.launch
 
 class PokemonListFragment : Fragment() {
     //region Properties
-    private val viewModel: PokemonListViewModel by activityViewModels() {
-        val pokemonRepository = PokemonRepository()
-        PokemonListViewModelFactory(pokemonRepository, requireActivity().application)
-    }
+    private val viewModel: PokemonListViewModel by activityViewModels()
     private lateinit var adapter: PokemonListAdapter
     private lateinit var binding: FragmentPokemonListViewBinding
     //endregion Properties
@@ -164,7 +157,7 @@ class PokemonListFragment : Fragment() {
             }
             is PokemonUiState.Error -> {
                 handleLoadingState(false)
-                showErrorWithDelay(state.message)
+                showErrorWithDelay(requireContext().getString(state.messageId))
             }
         }
     }
@@ -278,16 +271,4 @@ class PokemonListFragment : Fragment() {
     }
     //endregion Helper Methods
 
-    class PokemonListViewModelFactory(
-        private val pokemonRepository: PokemonRepository,
-        private val application: Application
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(PokemonListViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return PokemonListViewModel(application, pokemonRepository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-    }
 }

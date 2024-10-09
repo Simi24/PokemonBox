@@ -1,6 +1,5 @@
 package com.example.testandroidstudio.viewModel
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +14,7 @@ import com.example.testandroidstudio.utility.PokemonUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class PokemonListViewModel(private val application: Application, private val pokemonRepository: IPokemonRepository = PokemonRepository()) : ViewModel() {
+class PokemonListViewModel(private val pokemonRepository: IPokemonRepository = PokemonRepository()) : ViewModel() {
 
     //region LiveData declarations
     private val _pokemonList = MutableLiveData<List<Pokemon>>()
@@ -55,7 +54,7 @@ class PokemonListViewModel(private val application: Application, private val pok
             _pokemonList.value = list
             updateCurrentList()
         } catch (e: Exception) {
-            handleError(application.getString(R.string.error_loading_pokemon_list))
+            handleError(R.string.error_loading_pokemon_list)
         }
     }
 
@@ -66,7 +65,7 @@ class PokemonListViewModel(private val application: Application, private val pok
             _searchResults.value = pokemonRepository.searchPokemon(query)
             _pokemonUiState.value = _searchResults.value?.let { PokemonUiState.Success(it) }!!
         } catch (e: Exception) {
-            handleError(application.getString(R.string.error_searching_pokemon))
+            handleError(R.string.error_searching_pokemon)
         }
     }
 
@@ -103,7 +102,7 @@ class PokemonListViewModel(private val application: Application, private val pok
             updateMaxPage()
         } catch (e: Exception) {
             _isNextPageLoading.value = false
-            handleError(application.getString(R.string.error_loading_more_pokemon))
+            handleError(R.string.error_loading_more_pokemon)
         }
     }
 
@@ -129,8 +128,8 @@ class PokemonListViewModel(private val application: Application, private val pok
         }
     }
 
-    private fun handleError(errorMessage: String) {
-        _pokemonUiState.value = PokemonUiState.Error(errorMessage)
+    private fun handleError(errorMessageId: Int) {
+        _pokemonUiState.value = PokemonUiState.Error(errorMessageId)
     }
     //endregion Private helper methods
 }
